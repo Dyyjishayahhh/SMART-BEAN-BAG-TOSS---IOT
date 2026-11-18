@@ -1,0 +1,19 @@
+# Generated compiler output and local caches
+/tmp/
+**/build/
+**/__pycache__/
+*.py[cod]
+*.elf
+*.bin
+*.o
+*.a
+
+# Local credentials and editor/system files
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.DS_Store
+Thumbs.db
+~$*

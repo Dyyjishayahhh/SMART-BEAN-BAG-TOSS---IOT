@@ -1,0 +1,7 @@
+# Preserve binary documents and transfer packages byte-for-byte.
+*.pdf binary
+*.docx binary
+*.zip binary
+*.png binary
+*.jpg binary
+*.jpeg binary

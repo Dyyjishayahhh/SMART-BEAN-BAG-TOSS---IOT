@@ -1,0 +1,257 @@
+{
+  "board": "WEMOS LOLIN32 v1.0.0",
+  "orientation": "antenna up; USB down",
+  "header_left_top_to_bottom": [
+    "3V",
+    "EN",
+    "VP",
+    "VN",
+    "32",
+    "33",
+    "34",
+    "35",
+    "25",
+    "26",
+    "27",
+    "14",
+    "12",
+    "13",
+    "5V",
+    "GND"
+  ],
+  "header_right_top_to_bottom": [
+    "GND",
+    "TX",
+    "RX",
+    "3V",
+    "22",
+    "21",
+    "GND",
+    "GND",
+    "19",
+    "23",
+    "18",
+    "5",
+    "3V",
+    "17",
+    "16",
+    "4",
+    "0",
+    "GND",
+    "2",
+    "15"
+  ],
+  "manufacturer_reference": "https://img.sauf.ca/pictures/2017-11-04/8c3db4dd04f1c0bfdd1a99da9106e0c5.pdf",
+  "connections": [
+    {
+      "id": "W01",
+      "a": "ESP:L3V",
+      "b": "RAIL:3V3",
+      "color": "red",
+      "length": 8
+    },
+    {
+      "id": "W02",
+      "a": "ESP:LGND",
+      "b": "RAIL:GND",
+      "color": "gnd",
+      "length": 8
+    },
+    {
+      "id": "W03",
+      "a": "S30:OUT",
+      "b": "ESP:L32",
+      "color": "blue",
+      "length": 60
+    },
+    {
+      "id": "W04",
+      "a": "S30:VCC",
+      "b": "RAIL:3V3",
+      "color": "red",
+      "length": 60
+    },
+    {
+      "id": "W05",
+      "a": "S30:GND",
+      "b": "RAIL:GND",
+      "color": "gnd",
+      "length": 60
+    },
+    {
+      "id": "W09",
+      "a": "S20:OUT",
+      "b": "ESP:L35",
+      "color": "green",
+      "length": 42
+    },
+    {
+      "id": "W10",
+      "a": "S20:VCC",
+      "b": "RAIL:3V3",
+      "color": "red",
+      "length": 42
+    },
+    {
+      "id": "W11",
+      "a": "S20:GND",
+      "b": "RAIL:GND",
+      "color": "gnd",
+      "length": 42
+    },
+    {
+      "id": "W06",
+      "a": "S10:OUT",
+      "b": "ESP:L34",
+      "color": "orange",
+      "length": 42
+    },
+    {
+      "id": "W07",
+      "a": "S10:VCC",
+      "b": "RAIL:3V3",
+      "color": "red",
+      "length": 42
+    },
+    {
+      "id": "W08",
+      "a": "S10:GND",
+      "b": "RAIL:GND",
+      "color": "gnd",
+      "length": 42
+    },
+    {
+      "id": "W12",
+      "a": "ESP:L25",
+      "b": "LED10:R_IN",
+      "color": "blue",
+      "length": 30
+    },
+    {
+      "id": "W13",
+      "a": "LED10:K",
+      "b": "RAIL:GND",
+      "color": "gnd",
+      "length": 30
+    },
+    {
+      "id": "W14",
+      "a": "ESP:L26",
+      "b": "LED20:R_IN",
+      "color": "green",
+      "length": 30
+    },
+    {
+      "id": "W15",
+      "a": "LED20:K",
+      "b": "RAIL:GND",
+      "color": "gnd",
+      "length": 30
+    },
+    {
+      "id": "W16",
+      "a": "ESP:L27",
+      "b": "LED30:R_IN",
+      "color": "orange",
+      "length": 50
+    },
+    {
+      "id": "W17",
+      "a": "LED30:K",
+      "b": "RAIL:GND",
+      "color": "gnd",
+      "length": 50
+    },
+    {
+      "id": "W18",
+      "a": "ESP:R18",
+      "b": "START:T1",
+      "color": "blue",
+      "length": 20
+    },
+    {
+      "id": "W19",
+      "a": "START:T2",
+      "b": "RAIL:GND",
+      "color": "gnd",
+      "length": 20
+    },
+    {
+      "id": "W20",
+      "a": "ESP:R19",
+      "b": "RESET:T1",
+      "color": "gray",
+      "length": 15
+    },
+    {
+      "id": "W21",
+      "a": "RESET:T2",
+      "b": "RAIL:GND",
+      "color": "gnd",
+      "length": 15
+    },
+    {
+      "id": "W22",
+      "a": "ESP:R23",
+      "b": "MISS:T1",
+      "color": "purple",
+      "length": 20
+    },
+    {
+      "id": "W23",
+      "a": "MISS:T2",
+      "b": "RAIL:GND",
+      "color": "gnd",
+      "length": 20
+    },
+    {
+      "id": "W24",
+      "a": "ESP:L33",
+      "b": "BUZZ:SIG",
+      "color": "yellow",
+      "length": 30
+    },
+    {
+      "id": "W25",
+      "a": "BUZZ:VCC",
+      "b": "RAIL:3V3",
+      "color": "red",
+      "length": 30
+    },
+    {
+      "id": "W26",
+      "a": "BUZZ:GND",
+      "b": "RAIL:GND",
+      "color": "gnd",
+      "length": 30
+    },
+    {
+      "id": "W27",
+      "a": "ESP:R21",
+      "b": "OLED:SDA",
+      "color": "teal",
+      "length": 35
+    },
+    {
+      "id": "W28",
+      "a": "ESP:R22",
+      "b": "OLED:SCL",
+      "color": "cyan",
+      "length": 35
+    },
+    {
+      "id": "W29",
+      "a": "OLED:VCC",
+      "b": "RAIL:3V3",
+      "color": "red",
+      "length": 35
+    },
+    {
+      "id": "W30",
+      "a": "OLED:GND",
+      "b": "RAIL:GND",
+      "color": "gnd",
+      "length": 35
+    }
+  ]
+}
