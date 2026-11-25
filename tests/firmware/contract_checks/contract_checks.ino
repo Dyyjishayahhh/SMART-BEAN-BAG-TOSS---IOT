@@ -51,14 +51,43 @@ constexpr bool checkChaseMisses() {
   return s.activeZone == target && s.nextIndex == index &&
          s.score == 0 && s.wrong == 1 && s.misses == 1 && s.throwsUsed == 2;
 }
-constexpr bool checkLockout() {
+constexpr bool checkFastThrows() {
   GameState s;
   s.start(PRECISION, 100, 3);
   if (s.recordThrow(s.activeZone, 100) != CORRECT_HIT) return false;
-  if (s.recordThrow(s.activeZone, 749) != IGNORED) return false;
-  if (s.recordThrow(-1, 101) != IGNORED) return false;
-  if (s.recordThrow(s.activeZone, 750) != CORRECT_HIT) return false;
-  return s.hits == 2 && s.throwsUsed == 2;
+  if (s.recordThrow(s.activeZone, 123) != CORRECT_HIT) return false;
+  if (s.recordThrow(s.activeZone, 145) != CORRECT_HIT) return false;
+  return s.hits == 3 && s.throwsUsed == 3;
+}
+
+constexpr bool checkSensorRearm() {
+  TargetInput first;
+  TargetInput second;
+  if (first.sample(true, 100) || first.sample(true, 104) || !first.sample(true, 105)) return false;
+  if (first.sample(true, 110) || second.sample(true, 110) || !second.sample(true, 115)) return false;
+  if (first.sample(false, 120) || first.sample(true, 123) || first.sample(true, 130)) return false;
+  if (first.sample(false, 140) || first.sample(false, 145)) return false;
+  return !first.sample(true, 148) && first.sample(true, 153) && !first.sample(true, 160);
+}
+
+constexpr bool checkScoreCorrection() {
+  GameState s;
+  s.start(PRECISION, 100, 3);
+  const int falseHit = s.activeZone;
+  if (s.recordThrow(falseHit, 100) != CORRECT_HIT) return false;
+  const int nextTarget = s.activeZone;
+  const int nextIndex = s.nextIndex;
+  if (!s.markHitAsMiss(falseHit) || s.markHitAsMiss(falseHit)) return false;
+  if (s.score != 0 || s.throwsUsed != 1 || s.misses != 1 || s.hits != 0
+      || s.activeZone != nextTarget || s.nextIndex != nextIndex || !s.running) return false;
+  int finalZone = -1;
+  for (int i = 1; i < 6; ++i) {
+    finalZone = s.activeZone;
+    if (s.recordThrow(finalZone, 100 + i * 25) != CORRECT_HIT) return false;
+  }
+  const int correctedScore = s.score - (finalZone + 1) * 10;
+  return s.markHitAsMiss(finalZone) && s.finished && s.throwsUsed == 6
+      && s.score == correctedScore && s.misses == 2 && s.hits == 4;
 }
 constexpr bool checkDeadline() {
   GameState s;
@@ -90,10 +119,38 @@ static_assert(checkPrecision(), "Precision balance, max score and six-throw fini
 static_assert(checkPrecisionMisses(), "Wrong holes and misses consume throws");
 static_assert(checkChaseBalanceAndFairness(), "Chase balanced and repeatable");
 static_assert(checkChaseMisses(), "Only correct Chase hits advance targets");
-static_assert(checkLockout(), "First throw immediate, duplicates blocked");
+static_assert(checkFastThrows(), "Consecutive throws less than 650ms apart are accepted");
+static_assert(checkSensorRearm(), "Each beam suppresses duplicates and rearms independently after clearing");
+static_assert(checkScoreCorrection(), "Correction converts the hit into a miss and preserves the throw count and next target");
 static_assert(checkDeadline(), "Exactly 60 seconds, no late scores");
 static_assert(checkRollover(), "Timers work across millis rollover");
 static_assert(checkResetAndInvalidInputs(), "Reset clears and retains mode");
+
+constexpr bool checkColorMemory() {
+  for (int level = 1; level <= MEMORY_MAX_LEVEL; ++level) {
+    GameState s;
+    s.start(COLOR_MEMORY, 100, 23, level);
+    const uint32_t firstLight = 100 + MEMORY_PREVIEW_LEAD_MS;
+    if (!s.previewing || s.orderLength != level + 2 || s.memoryLight(firstLight) != s.activeZone) return false;
+    if (s.memoryLight(firstLight - 1) != -1 || s.memoryLight(firstLight + s.memoryFlashMs()) != -1
+        || s.recordThrow(0, 100) != IGNORED) return false;
+    const uint32_t start = firstLight + s.memoryStepMs() * s.orderLength;
+    if (s.endPreview(start - 1) || !s.endPreview(start) || s.memoryLight(start) != -1) return false;
+    GameState perfect = s;
+    if (s.recordThrow(-1, start) != MISSED_THROW || s.throwsUsed != 1) return false;
+    for (int step = 0; step < s.orderLength; ++step) {
+      const uint32_t now = start + step * 25;
+      if (perfect.recordThrow(s.order[step], now) != CORRECT_HIT) return false;
+      if (step > 0 && (s.activeZone != s.order[step] || s.recordThrow(s.activeZone, now) != CORRECT_HIT)) return false;
+    }
+    if (!s.finished || s.hits != level + 1 || s.memoryCleared() || s.nextMemoryLevel() != level) return false;
+    if (!perfect.memoryCleared() || perfect.nextMemoryLevel() != (level == MEMORY_MAX_LEVEL ? 1 : level + 1)) return false;
+    if (level == 1 && s.memoryFlashMs() != 900) return false;
+    if (level == MEMORY_MAX_LEVEL && s.memoryFlashMs() != 405) return false;
+  }
+  return true;
+}
+static_assert(checkColorMemory(), "Memory previews 3 to 12 lights, speeds up across levels and advances on perfect rounds");
 
 constexpr bool checkCountdownSounds() {
   CountdownSound cue;

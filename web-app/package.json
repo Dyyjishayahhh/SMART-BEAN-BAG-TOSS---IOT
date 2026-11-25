@@ -1,0 +1,11 @@
+{
+  "name": "i-shoot-mo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": "24.x" },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server/local.js",
+    "test": "node --test tests/*.test.js"
+  }
+}

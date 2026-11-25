@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#073c9e">
+  <meta name="description" content="Play I-Shoot Mo, a three-target beanbag toss game.">
+  <title>I-Shoot Mo</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <header class="top wrap">
+    <a class="brand" href="/" aria-label="I-Shoot Mo home">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+      I-Shoot Mo
+    </a>
+    <div class="audio-controls">
+      <button id="music-toggle" class="quiet-button music-toggle" type="button" aria-label="Game audio"
+        aria-pressed="false" title="Turn on game audio">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M11 5 6 9H3v6h3l5 4V5Z"></path>
+          <path class="music-playing" d="M15 9a4.2 4.2 0 0 1 0 6m3-9a8.5 8.5 0 0 1 0 12"></path>
+          <path class="music-muted" d="m16 9 5 6m0-6-5 6"></path>
+        </svg>
+      </button>
+      <details id="volume-menu" class="volume-menu">
+        <summary class="quiet-button volume-toggle">Volume</summary>
+        <div class="volume-panel">
+          <div class="volume-row">
+            <label id="music-volume-label" for="music-volume">Background music</label>
+            <output id="music-volume-value" for="music-volume" aria-live="off">28%</output>
+            <input id="music-volume" type="range" min="0" max="100" value="28" aria-labelledby="music-volume-label">
+          </div>
+          <div class="volume-row">
+            <label id="effects-volume-label" for="effects-volume">Sound effects</label>
+            <output id="effects-volume-value" for="effects-volume" aria-live="off">100%</output>
+            <input id="effects-volume" type="range" min="0" max="100" value="100" aria-labelledby="effects-volume-label">
+          </div>
+        </div>
+      </details>
+    </div>
+    <div class="top-actions">
+      <button id="guest-play" class="quiet-button" type="button" hidden>Play as a Guest</button>
+      <button id="login-open" class="quiet-button" type="button" aria-controls="player-menu" aria-expanded="false" hidden>Log in</button>
+      <button id="signup-open" class="small-button" type="button" aria-controls="player-menu" aria-expanded="false" hidden>Sign up</button>
+      <div id="player-menu" class="player-form" hidden>
+        <form id="player-form">
+          <label for="player-input">Username</label>
+          <input id="player-input" minlength="3" maxlength="24" required autocomplete="username">
+          <label for="player-password">Password</label>
+          <input id="player-password" type="password" minlength="8" maxlength="128" required autocomplete="current-password">
+          <div class="account-actions">
+            <button id="account-submit" class="small-button" type="submit" value="signin">Log in</button>
+          </div>
+        </form>
+        <div id="signed-player" hidden>
+          <p>Start from the app to save rounds and coaching to this account.</p>
+          <button id="signout" class="quiet-button" type="button">Sign out</button>
+        </div>
+        <p id="account-message" class="account-message" role="status"></p>
+      </div>
+    </div>
+  </header>
+  <audio id="background-music" src="/background.mp3?v=basketbol" preload="none" loop></audio>
+
+  <main class="wrap">
+    <section class="arcade" aria-labelledby="game-title">
+      <div class="game-panel">
+        <div id="board-status" class="board-status" data-status="loading"><span aria-hidden="true"></span><span id="status-text">Checking board…</span></div>
+        <h1 id="game-title" tabindex="-1">Ready to toss?</h1>
+        <p id="game-intro" class="intro">Choose your game and start a round.</p>
+
+        <form id="join" class="join" hidden>
+          <label for="game-code">Game code</label>
+          <div class="join-field">
+            <input id="game-code" type="password" required autocomplete="off" placeholder="Enter your game code">
+            <button class="small-button" type="submit">Join game</button>
+          </div>
+        </form>
+
+        <div id="setup" class="setup">
+          <fieldset class="choices" aria-label="Players">
+            <label><input type="radio" name="players" value="solo" checked><span>Single player</span></label>
+            <label><input type="radio" name="players" value="versus"><span>VS mode</span></label>
+          </fieldset>
+          <fieldset id="solo-style" class="choices" aria-label="Play style">
+            <label><input type="radio" name="type" value="practice" checked><span>Practice</span></label>
+            <label><input type="radio" name="type" value="competition"><span>Competition</span></label>
+          </fieldset>
+          <fieldset id="game-choices" class="choices game-choices" aria-label="Game">
+            <label><input type="radio" name="game" value="chase"><span><strong>60 Seconds</strong><small id="chase-length">Unlimited throws</small></span></label>
+            <label><input type="radio" name="game" value="precision" checked><span><strong>6 Throws</strong><small>Precision</small></span></label>
+            <label id="memory-option"><input type="radio" name="game" value="memory"><span><strong>Color Memory</strong><small>Watch, then throw</small></span></label>
+          </fieldset>
+          <div class="memory-settings" id="memory-settings" hidden>
+            <strong>Level 1 of 10</strong>
+            <p id="memory-help">Watch the lights, then throw in the same order. Clear the pattern to move on to longer sequences with faster flashes.</p>
+          </div>
+          <div id="guest-settings" class="name-settings" hidden>
+            <label for="guest-nickname">Guest name</label>
+            <input id="guest-nickname" maxlength="24" autocomplete="off" placeholder="Guest">
+            <p>Your best 60 Seconds score can rank. Sign in to save your stats and see the leaderboard.</p>
+          </div>
+          <div id="versus-setup" class="name-settings versus-setup" hidden>
+            <p id="versus-names-help">Enter both names to start. Player 1 throws first.</p>
+            <div class="versus-players">
+              <label for="versus-name-1">Player 1 name
+                <input id="versus-name-1" required maxlength="24" autocomplete="off" aria-describedby="versus-names-help">
+              </label>
+              <label for="versus-name-2">Player 2 name
+                <input id="versus-name-2" required maxlength="24" autocomplete="off" aria-describedby="versus-names-help">
+              </label>
+            </div>
+          </div>
+          <button id="start" class="primary" type="button" disabled><span class="play" aria-hidden="true"></span><span id="start-label">Start round</span></button>
+        </div>
+
+        <div id="round" class="round" hidden>
+          <div class="round-meta"><span id="round-mode"></span><span id="round-player"></span></div>
+          <p id="versus-status" class="versus-status" role="status" hidden></p>
+          <section id="versus-scoreboard" class="versus-scoreboard" aria-label="VS score" hidden>
+            <div id="match-card-1">
+              <span>Player 1</span><strong id="match-name-1"></strong><b id="match-score-1">—</b>
+            </div>
+            <div id="match-card-2">
+              <span>Player 2</span><strong id="match-name-2"></strong><b id="match-score-2">—</b>
+            </div>
+          </section>
+          <section id="memory-win" class="memory-win" aria-labelledby="memory-cleared" hidden>
+            <div id="memory-confetti" class="memory-confetti" aria-hidden="true"></div>
+            <span class="memory-medal" aria-hidden="true">✓</span>
+            <p id="memory-cleared" class="memory-cleared"></p>
+            <p id="memory-win-stats" class="memory-win-stats"></p>
+          </section>
+          <div id="round-score" class="score-line">
+            <div><span class="readout-label">Score</span><strong id="score" class="score">0</strong></div>
+            <div><span class="readout-label" id="progress-label">Throws left</span><strong id="progress" class="progress">6</strong></div>
+          </div>
+          <p id="target" class="target" aria-live="polite"></p>
+          <p id="shot-feedback" class="shot-feedback" role="status" hidden></p>
+          <div id="targets" class="target-strip" aria-label="Targets">
+            <span data-target="10">10</span><span data-target="20">20</span><span data-target="30">30</span>
+          </div>
+          <div id="demo-controls" class="demo-controls" hidden>
+            <span>Try a demo toss</span>
+            <div><button type="button" data-landed="10">10</button><button type="button" data-landed="20">20</button><button type="button" data-landed="30">30</button></div>
+          </div>
+          <div class="round-controls">
+            <button id="miss" class="primary" type="button">Miss</button>
+            <button id="reset" class="outline" type="button">Reset</button>
+            <button id="replay" class="primary" type="button" hidden>Play again</button>
+            <button id="change-game" class="outline" type="button" hidden>Change game</button>
+          </div>
+        </div>
+        <section id="correction" class="correction" aria-label="Score correction" hidden>
+          <button id="correct" class="small-button" type="button" disabled>Mark last hit as miss</button>
+          <p id="correction-message" class="message" role="status"></p>
+        </section>
+        <p id="message" class="message" role="status"></p>
+      </div>
+      <div class="cabinet">
+        <img src="/cabinet.png" alt="I-Shoot Mo carnival cabinet with the 30-point red target above the 10-point blue and 20-point green targets." width="1536" height="1024">
+      </div>
+    </section>
+
+    <section class="features" aria-label="Practice and board updates">
+      <details id="level-card" class="feature feature-level">
+        <summary><span class="feature-icon" aria-hidden="true">◎</span>
+          <span><span class="feature-label">Practice level</span><strong id="level">Level 2</strong><span id="level-detail" class="feature-detail">Play a practice round to find your level.</span></span>
+        </summary>
+        <div class="feature-body">
+          <p id="level-evidence">Level 2 is the starting point. Your next level is based on your recent Practice throws.</p>
+          <dl class="level-guide">
+            <div><dt>Level 1</dt><dd>More 10-point targets in 6 Throws or 75 seconds in timed Practice.</dd></div>
+            <div><dt>Level 2</dt><dd>Balanced targets in 6 Throws or 60 seconds in timed Practice.</dd></div>
+            <div><dt>Level 3</dt><dd>More 30-point targets in 6 Throws or 45 seconds in timed Practice.</dd></div>
+          </dl>
+          <p>Competition uses fixed rules. Color Memory has its own difficulty setting.</p>
+        </div>
+      </details>
+      <details id="coach-card" class="feature feature-coach">
+        <summary><span class="feature-icon" aria-hidden="true">✦</span>
+          <span><span class="feature-label">Your coach</span><strong>Practice tips</strong><span class="feature-detail">See how you’re doing on each hole.</span></span>
+        </summary>
+        <div class="feature-body">
+          <strong id="coach">Play a few rounds</strong>
+          <p id="coach-detail"></p>
+          <p>The coach compares hits with attempts at each target across up to 18 recent rounds. Once you have at least three attempts at a hole, it can recommend the one with the lowest hit rate.</p>
+          <button id="coach-throws" class="link-button" type="button">View recent throws</button>
+        </div>
+      </details>
+      <details id="health-card" class="feature feature-health">
+        <summary><span class="feature-icon" aria-hidden="true">✓</span>
+          <span><span class="feature-label">Board check</span><strong id="health">Waiting for the board</strong><span id="health-detail" class="feature-detail">Live sensor readings will appear here.</span></span>
+        </summary>
+        <div class="feature-body"><p>Board Check watches for sensors that stay blocked or switch unusually fast. If a hole is flagged, clear it and check that the sensor is aligned.</p></div>
+      </details>
+    </section>
+
+    <details id="history" class="history">
+      <summary>Your stats</summary>
+      <div class="stats-tabs" role="tablist" aria-label="Your stats">
+        <button id="rounds-tab" type="button" role="tab" aria-selected="true" aria-controls="rounds-panel">Recent rounds</button>
+        <button id="throws-tab" type="button" role="tab" aria-selected="false" aria-controls="throws-panel" tabindex="-1">Recent throws</button>
+      </div>
+      <section id="rounds-panel" role="tabpanel" aria-labelledby="rounds-tab">
+        <p id="history-empty">Completed rounds started from the app will appear here.</p>
+        <ul id="recent-rounds"></ul>
+      </section>
+      <section id="throws-panel" role="tabpanel" aria-labelledby="throws-tab" hidden>
+        <p id="throw-summary"></p>
+        <div class="stat-table"><table>
+          <thead><tr><th scope="col">Hole</th><th scope="col">Landed in</th><th scope="col">Hit rate when aiming</th></tr></thead>
+          <tbody id="target-stats"></tbody>
+        </table></div>
+        <p>Last 24 throws</p>
+        <ul id="recent-throws"></ul>
+      </section>
+    </details>
+    <details id="leaderboard" class="history leaderboard">
+      <summary>60-second leaderboard</summary>
+      <p>Best scores in single-player 60 Seconds Competition, including guest scores.</p>
+      <p id="leaderboard-status" role="status"></p>
+      <ol id="leaderboard-list"></ol>
+    </details>
+  </main>
+</body>
+</html>

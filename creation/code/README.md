@@ -11,7 +11,8 @@ the folder named `ishootmo_code`.
 3. Select **WEMOS LOLIN32** and the board's COM port.
 4. Install **Adafruit GFX Library** and **Adafruit SH110X** in Library
    Manager. Accept dependencies, including Adafruit BusIO.
-5. This sketch uses the SH1106 driver confirmed by the OLED test.
+5. This sketch uses the SH1106 driver confirmed by the OLED test. Install
+   **WebSockets by Markus Sattler** (2.7.2 or later) for Wi-Fi-enabled builds.
    Set `BUZZER_ACTIVE_LOW` to match the three-pin active buzzer:
    - `false`: HIGH turns sound on (current test setting).
    - `true`: LOW turns sound on.
@@ -20,9 +21,12 @@ the folder named `ishootmo_code`.
 6. Connect a Micro-USB data cable, click Verify, then Upload.
 7. Open Serial Monitor at **115200 baud**.
 
-OLED address defaults to `0x3C`. Change it only if a scan finds your module
-at another address. If uploading remains on Connecting, hold BOOT while
-connecting and release when writing starts.
+The firmware probes `0x3C` and `0x3D` for the OLED. It checks the standard
+GPIO21/GPIO22 wiring first and tries the two signal pins in reverse order
+if needed. Serial Monitor at 115200 reports the address and pin order
+when it connects, or the probe results if it cannot find the OLED.
+If uploading remains on Connecting, hold BOOT while connecting and release
+when writing starts.
 
 ## Two modes
 

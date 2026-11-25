@@ -53,7 +53,7 @@ use the current source sketch for the confirmed display and buzzer settings.
 - `MISS MIKAY - IOT - INTELLEGENT SYSTEM PROGRESS REPORT/`: progress report.
 - `PROPOSAL-tu/` and `MODULES/`: proposals and course reference material.
 
-## Planned intelligent web application
+## Intelligent web application
 
 The agreed three intelligent features are:
 
@@ -64,9 +64,9 @@ The agreed three intelligent features are:
 3. A sensor health monitor using raw sensor states and timing to flag
    possible obstructions, sensitivity problems or inconsistent readings.
 
-The application has not been built or deployed. Vercel plus Supabase is a
-proposed free-tier hosting option, subject to the providers' limits. The
-planned ESP32 connection will record attempts and sensor data so the app
-can update statistics and recommendations. Saving data and running expert
-rules do not by themselves train a machine-learning model; any learned
-model will require a defined training and evaluation process.
+The application source is in [web-app](web-app/README.md). The local demo
+uses a simulated board for testing. The hosted configuration uses Vercel
+and Supabase and connects to the ESP32 over Wi-Fi. The board sends the
+aimed target, outcome, and elapsed time for each throw, plus sensor
+timing for the board check. The intelligent features apply fuzzy logic
+and rules to this data.
